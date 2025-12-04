@@ -29,7 +29,7 @@ function LandingPage() {
 
         <div className="landing-meta">
           <span className="badge">IST Capstone</span>
-          <span className="badge">Client: Rob Kulathinal</span>
+          <span className="badge">Client: Dr. Rob Kulathinal</span>
           <span className="badge">Group 2 – SNP Insights</span>
         </div>
 
