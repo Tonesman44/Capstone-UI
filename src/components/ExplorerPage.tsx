@@ -5,12 +5,14 @@ import type { SnpRecord } from "../data/mockSnps";
 import SearchFilters from "./SearchFilters";
 import DataTable from "./DataTable";
 import VisualizationPanel from "./VisualizationPanel";
+import { useAuth } from "../hooks/useAuth";
 
 function ExplorerPage() {
   const [search, setSearch] = useState("");
   const [chromosome, setChromosome] = useState("");
   const [population, setPopulation] = useState("");
   const [showViz, setShowViz] = useState(false);
+  const { user, saveQuery } = useAuth();
 
   const rows: SnpRecord[] = useMemo(() => {
     return mockSnps.filter((row) => {
@@ -35,13 +37,31 @@ function ExplorerPage() {
     setShowViz(false);
   };
 
+  const handleSaveQuery = () => {
+    if (!user) {
+      alert("Please log in to save queries.");
+      return;
+    }
+
+    const summary = `search="${search || "∅"}", chr="${chromosome || "All"}", pop="${
+      population || "All"
+    }"`;
+    saveQuery(summary);
+    alert("Query saved to your profile!");
+  };
+
   return (
     <div className="explorer-layout">
-      <h2 className="explorer-title">PopSNP Explorer</h2>
-      <p className="explorer-description">
-        Search mock SNP records by gene, SNP ID, or disease, filter by chromosome and population,
-        and generate a simple visualization for Dr. Kulathinal&apos;s research scenarios.
-      </p>
+      <div className="explorer-header">
+        <div>
+          <h2 className="explorer-title">PopSNP Explorer</h2>
+          <p className="explorer-description">
+            Run mock SNP queries by gene, SNP ID, or disease, filter by chromosome and population,
+            and generate a quick visualization to support Dr. Kulathinal&apos;s research
+            workflows.
+          </p>
+        </div>
+      </div>
 
       <div className="card">
         <SearchFilters
@@ -52,7 +72,8 @@ function ExplorerPage() {
           population={population}
           onPopulationChange={setPopulation}
           onVisualize={() => setShowViz(true)}
-          onClear={handleClear}          // 👈 pass clear handler
+          onClear={handleClear}
+          onSaveQuery={handleSaveQuery}
         />
 
         <DataTable rows={rows} />
